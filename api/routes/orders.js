@@ -6,7 +6,14 @@ const router = express.Router();
 const Order = require('../models/order')
 
 router.get('/', (req, res, next) => {
-    res.status(200).json({wiadomosc: 'Lista wszystkich zamówień'})
+    Order.find()
+    .populate("productId", "name")
+    .then(result => {
+        res.status(200).json({
+            wiadomosc: 'Lista wszystkich zamówień',
+            info: result
+        })
+    })
 });
 
 router.post('/', (req, res, next) => {
@@ -23,7 +30,7 @@ router.post('/', (req, res, next) => {
             info: result
         });
     })
-    .catch((err) => console.log(err))
+    .catch((err) => res.status(500).json({error: err}))
     
 });
 
