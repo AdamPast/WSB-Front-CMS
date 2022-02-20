@@ -1,6 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
-//TODO: _id, productId, quantity
+
 const router = express.Router();
 
 const Order = require('../models/order')
@@ -14,6 +14,7 @@ router.get('/', (req, res, next) => {
             info: result
         })
     })
+    .catch((err) => res.status(500).json({error: err}))
 });
 
 router.post('/', (req, res, next) => {
@@ -36,12 +37,25 @@ router.post('/', (req, res, next) => {
 
 router.get("/:id", (req,res,next) => {
     const id = req.params.id;
-    res.status(200).json({wiadomosc: `Szczegóły zamówienia o nr ${id}`})
+    Order.findById(id)
+    .then(result => {
+        res.status(200).json({
+            wiadomosc: `Szczegóły zamówienia o nr ${id}`,
+            info: result
+        })
+    })
+    .catch((err) => res.status(500).json({error: err}))
+    
 })
 
 router.delete("/:id", (req,res,next) => {
     const id = req.params.id;
-    res.status(200).json({wiadomosc: `Usunięto zamówienia o nr ${id}`})
+    Order.findByIdAndDelete(id)
+    .then(()=>{
+        res.status(200).json({wiadomosc: `Usunięto produkt o nr ${id}`})
+
+    })
+    .catch((err) => res.status(500).json({error: err}))
 })
 
 
