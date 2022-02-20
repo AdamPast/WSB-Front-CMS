@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
             info: result
         })
     })
-    .catch(err => console.log(err))
+    .catch((err) => res.status(500).json({error: err}))
 });
 
 router.post('/', (req, res, next) => {
@@ -29,7 +29,7 @@ router.post('/', (req, res, next) => {
             info: result
         });
     })
-        .catch(err => console.log(err))
+    .catch((err) => res.status(500).json({error: err}))
 });
 
 router.get("/:id", (req,res,next) => {
@@ -41,23 +41,13 @@ router.get("/:id", (req,res,next) => {
             info: result
         })
     })
-    .catch(err => console.log(err))
+    .catch((err) => res.status(500).json({error: err}))
     
 })
 
 router.put("/:id", (req,res,next) => {
     const id = req.params.id;
-    Product.findByIdAndUpdate(
-        id,
-        {
-            name: req.body.name,
-            price: req.body.price
-        },
-        {
-            new:true
-        }
-        )
-        
+    Product.findByIdAndUpdate(id, {name: req.body.name, price: req.body.price},{new: true})
     .then((result) => {
         res.status(200).json({
             wiadomosc: `Zmiana produktu o nr ${id}`,
@@ -65,7 +55,7 @@ router.put("/:id", (req,res,next) => {
         });
 
     })
-    .catch(err => console.log(err))
+    .catch((err) => res.status(500).json({error: err}))
 })
 
 router.delete("/:id", (req,res,next) => {
@@ -75,7 +65,7 @@ router.delete("/:id", (req,res,next) => {
         res.status(200).json({wiadomosc: `Usunięto produkt o nr ${id}`})
 
     })
-    .catch(err => console.log(err))
+    .catch((err) => res.status(500).json({error: err}))
 })
 
 
