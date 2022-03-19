@@ -3,6 +3,9 @@ const mongoose = require('mongoose')
 const router = express.Router();
 
 const Product = require('../models/product')
+
+const auth = require('../middleware/auth')
+
 //ładowanie obrazkow
 const multer = require('multer')
 //zmiana miejsca przechowywania i nazwy pliku
@@ -39,7 +42,7 @@ router.get('/', (req, res, next) => {
     .catch((err) => res.status(500).json({error: err}))
 });
 
-router.post('/', upload.single('productImage'), (req, res, next) => {
+router.post('/', upload.single('productImage'), auth, (req, res, next) => {
     console.log(req.file);
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
@@ -71,7 +74,7 @@ router.get("/:id", (req,res,next) => {
     
 })
 
-router.put("/:id", (req,res,next) => {
+router.put("/:id", auth,(req,res,next) => {
     const id = req.params.id;
     Product.findByIdAndUpdate(id, {name: req.body.name, price: req.body.price},{new: true})
     .then((result) => {
@@ -84,7 +87,7 @@ router.put("/:id", (req,res,next) => {
     .catch((err) => res.status(500).json({error: err}))
 })
 
-router.delete("/:id", (req,res,next) => {
+router.delete("/:id", auth, (req,res,next) => {
     const id = req.params.id;
     Product.findByIdAndDelete(id)
     .then(()=>{
