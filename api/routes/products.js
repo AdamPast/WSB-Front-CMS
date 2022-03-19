@@ -6,7 +6,6 @@ const Product = require('../models/product')
 //ładowanie obrazkow
 const multer = require('multer')
 //zmiana miejsca przechowywania i nazwy pliku
-const date = new Date().toISOString().replaceAll(":", "_")
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './uploads/')
@@ -15,7 +14,19 @@ const storage = multer.diskStorage({
       cb(null, new Date().toISOString().replaceAll(":", "_") + file.originalname)
     }
   })
-const upload = multer({dest: 'uploads/', storage: storage})
+//filtracja
+ const fileFilter = (req, file, cb) => {
+     if(file.mimetype === "image/jpeg" || file.mimetype === "image/png"){
+         cb(null,true)
+     }else{
+         cb(null,false)
+     }
+ }
+const upload = multer({dest: 'uploads/', storage: storage, limits: {
+    fileSize: 1024*1024*5,
+},
+    fileFilter: fileFilter,
+})
 
 router.get('/', (req, res, next) => {
     Product.find()
@@ -33,7 +44,8 @@ router.post('/', upload.single('productImage'), (req, res, next) => {
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
-        price: req.body.price
+        price: req.body.price,
+        productImage: req.file.path
     })
     product
     .save()
